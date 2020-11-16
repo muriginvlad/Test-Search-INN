@@ -26,12 +26,10 @@ class OrganizationSearchViewController: UIViewController, UISearchBarDelegate {
         return searchController.isActive && !searchBarIsEmty
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
         presenter.output = self
-        
     }
     
     
@@ -72,6 +70,7 @@ class OrganizationSearchViewController: UIViewController, UISearchBarDelegate {
 //MARK: -TableView settings
 extension OrganizationSearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         if isFiltering {
             var amountCell = 1
             if organizationData.count > 0 {
@@ -85,12 +84,14 @@ extension OrganizationSearchViewController: UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell =  tableView.dequeueReusableCell(withIdentifier: "searchCell", for: indexPath ) as! SearchCell
-
+        
                 if isFiltering {
                     if organizationData.count == 0 {
                         cell.errorLabel.isHidden = false
                         cell.errorLabel.text = errorLabelText
                     } else {
+                        cell.nameOrganizationLabel.isHidden = false
+                        cell.innOrganizationLabel.isHidden = false
                         cell.nameOrganizationLabel.text = organizationData[indexPath.row].nameOrganization
                         cell.innOrganizationLabel.text = organizationData[indexPath.row].innOrganization
                     }
@@ -102,7 +103,9 @@ extension OrganizationSearchViewController: UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if organizationData.count > 0  {
         presenter.showDataDetail(inn: organizationData[indexPath.row].innOrganization, fromView: self)
+        }
     }
     
     @objc private func reloadTable() {
@@ -120,6 +123,10 @@ extension OrganizationSearchViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         print("В строку поиска введено \(searchController.searchBar.text!)")
+        if searchController.searchBar.text?.count ==  0  {
+            organizationData =  []
+            myTableView.reloadData() 
+        }
     }
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(OrganizationSearchViewController.reload), object: nil)
@@ -129,12 +136,12 @@ extension OrganizationSearchViewController: UISearchResultsUpdating {
     @objc func reload() {
         guard let searchText = searchController.searchBar.text?.lowercased() else { return }
         print("Начат поиск по параметру \(searchText)")
+       
         if searchController.searchBar.text!.count != 0 {
             presenter.searchData(searchData: searchText)
         }
         myTableView.reloadData()
     }
-    
 }
 
 extension OrganizationSearchViewController: OrganizationSearchPresenterOutput {
