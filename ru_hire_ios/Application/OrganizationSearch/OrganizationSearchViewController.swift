@@ -8,7 +8,7 @@
 import UIKit
 
 
-class OrganizationSearchViewController: UIViewController {
+class OrganizationSearchViewController: UIViewController, UISearchBarDelegate {
     
     var presenter: OrganizationSearchPresenterInput! = OrganizationSearchPresenter()
     var organizationData: [OrganizationShortData] = []
@@ -31,11 +31,11 @@ class OrganizationSearchViewController: UIViewController {
         super.viewDidLoad()
         updateUI()
         presenter.output = self
+        
     }
     
     
     func updateUI(){
-        
         //MARK: -Navigation settings UI
         self.navigationItem.title = "Поиск организации"
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -47,6 +47,8 @@ class OrganizationSearchViewController: UIViewController {
         searchController.searchBar.setValue("Отмена", forKey: "cancelButtonText")
         navigationItem.searchController = searchController
         definesPresentationContext = true
+
+        searchController.searchBar.delegate = self
        // searchController.searchBar.frame = CGRect(x: 0, y: 50, width: searchController.searchBar.frame.width , height: 60)
         self.view.addSubview(searchController.searchBar)
         
@@ -59,7 +61,8 @@ class OrganizationSearchViewController: UIViewController {
         myTableView.dataSource = self
         myTableView.delegate = self
         self.view.addSubview(myTableView)
-        
+    
+        //MARK: -Notification
         notificationCenter.addObserver(self, selector: #selector(reloadTable), name: NSNotification.Name("LoadСompleted"), object: nil)
         notificationCenter.addObserver(self, selector: #selector(loadError), name: NSNotification.Name("LoadError"), object: nil)
     }
@@ -114,13 +117,24 @@ extension OrganizationSearchViewController: UITableViewDelegate, UITableViewData
 
 //MARK: -SearchBar settings
 extension OrganizationSearchViewController: UISearchResultsUpdating {
+    
     func updateSearchResults(for searchController: UISearchController) {
+        print("В строку поиска введено \(searchController.searchBar.text!)")
+    }
+        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(OrganizationSearchViewController.reload), object: nil)
+        self.perform(#selector(OrganizationSearchViewController.reload), with: nil, afterDelay: 0.5)
+    }
         
+    @objc func reload() {
+        guard let searchText = searchController.searchBar.text?.lowercased() else { return }
+        print("Начат поиск по параметру \(searchText)")
         if searchController.searchBar.text!.count != 0 {
-            presenter.searchData(searchData: (searchController.searchBar.text?.lowercased())!)
+            presenter.searchData(searchData: searchText)
         }
         myTableView.reloadData()
     }
+    
 }
 
 extension OrganizationSearchViewController: OrganizationSearchPresenterOutput {
