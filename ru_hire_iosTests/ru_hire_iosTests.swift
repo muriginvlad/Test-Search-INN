@@ -10,8 +10,7 @@ import XCTest
 
 class ru_hire_iosTests: XCTestCase {
 
-    
-    func testMovieSetGet() {
+    func testOrganizationFullFataSetGet() {
         let data = OrganizationFullData(fullNameOrganization: "Сбер", innOrganization: "11111", addressOrganization: "г.Москва")
         XCTAssertEqual(data?.fullNameOrganization, "Сбер")
         XCTAssertEqual(data?.innOrganization, "11111")
