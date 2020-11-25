@@ -14,6 +14,8 @@ class OrganizationSearchViewController: UIViewController, UISearchBarDelegate {
     var organizationData: [OrganizationShortData] = []
     var errorLabelText = ""
     
+    
+    
    public var myTableView: UITableView!
     let notificationCenter = NotificationCenter.default
     let searchController = UISearchController(searchResultsController: nil)
@@ -64,7 +66,6 @@ class OrganizationSearchViewController: UIViewController, UISearchBarDelegate {
         notificationCenter.addObserver(self, selector: #selector(reloadTable), name: NSNotification.Name("LoadСompleted"), object: nil)
         notificationCenter.addObserver(self, selector: #selector(loadError), name: NSNotification.Name("LoadError"), object: nil)
     }
-    
 }
 
 //MARK: -TableView settings
@@ -148,4 +149,6 @@ extension OrganizationSearchViewController: OrganizationSearchPresenterOutput {
     func updatingSearchResults(newSearchData: [OrganizationShortData]) {
         organizationData = newSearchData
     }
+    
 }
+

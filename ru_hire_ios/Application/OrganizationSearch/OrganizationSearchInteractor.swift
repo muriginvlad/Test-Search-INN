@@ -25,7 +25,7 @@ class OrganizationSearchInteractor: OrganizationSearchInteractorInput {
     
     
     func loadInformation(requestWord: String, completion: @escaping ([OrganizationShortData]) -> Void) {
-        
+        //
         let apiKey = "bbacb5ad0f3be67e54eeb5e6fdeb1fa0021e68d9"
         let dadata_url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party"
         let header: HTTPHeaders = [
